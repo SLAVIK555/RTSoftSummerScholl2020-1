@@ -1,0 +1,13 @@
+Компиляция:  g++ -I/usr/local/include/opencv4 Main.cpp -o Main -L. -lopencv_core -lopencv_dnn -lopencv_imgproc -lopencv_imgcodecs -lopencv_img_hash -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_videoio -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_flann -lopencv_face -lopencv_photo -lopencv_xphoto
+
+
+
+Запуск:  ./Main --video=run.mp4
+
+./Main --video=/home/slava/RTSoftSummerSchool2020/CppYOLOv3Recognizer/run.mp4
+
+./Main --image=/home/slava/RTSoftSummerSchool2020/CppYOLOv3Recognizer/some_persons1.jpeg
+
+./Main --video=/home/slava/RTSoftSummerSchool2020/CppYOLOv3Recognizer/marathon.mp4
+
+
