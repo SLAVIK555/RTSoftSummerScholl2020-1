@@ -1,0 +1,37 @@
+slava@slava-VirtualBox:~/RTSoftSummerSchool2020/Docker$ sudo docker build -t "mytag" .
+Sending build context to Docker daemon  3.584kB
+Step 1/8 : FROM python:3.6.7-alpine3.6
+ ---> 8f30079779ef
+Step 2/8 : LABEL maintainer="Slava Bogomolov <slavabogomoloff@yandex.ru>"
+ ---> Using cache
+ ---> ab3394b8d754
+Step 3/8 : LABEL description="This example Dockerfile install Python and copy README."
+ ---> Using cache
+ ---> 136fc45a6e2d
+Step 4/8 : RUN apk update     && apk add --virtual build-dependencies         build-base         gcc         wget         git     && apk add         bash
+ ---> Using cache
+ ---> 8d365cbc7a6c
+Step 5/8 : RUN apk add --update python-dev python
+ ---> Running in 02340f264342
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.6/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.6/community/x86_64/APKINDEX.tar.gz
+(1/2) Installing python2 (2.7.15-r0)
+(2/2) Installing python2-dev (2.7.15-r0)
+Executing busybox-1.26.2-r11.trigger
+OK: 238 MiB in 52 packages
+Removing intermediate container 02340f264342
+ ---> 33a676d23040
+Step 6/8 : WORKDIR /home/slava/RTSoftSummerSchool2020/Docker
+ ---> Running in 08273901c949
+Removing intermediate container 08273901c949
+ ---> d75e848e2b2d
+Step 7/8 : COPY README /
+ ---> aa7603be0afa
+Step 8/8 : EXPOSE 80/tcp
+ ---> Running in 6852c1be3921
+Removing intermediate container 6852c1be3921
+ ---> 288b8d41f7a1
+Successfully built 288b8d41f7a1
+Successfully tagged mytag:latest
+slava@slava-VirtualBox:~/RTSoftSummerSchool2020/Docker$ 
+
