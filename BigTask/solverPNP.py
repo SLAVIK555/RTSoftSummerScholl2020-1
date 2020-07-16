@@ -28,24 +28,24 @@ model_points = np.array([
  
 focal_length = size[1]
 center = (size[1]/2, size[0]/2)
-#camera_matrix = np.array(
-#                         [[focal_length, 0, center[0]],
-#                         [0, focal_length, center[1]],
-#                         [0, 0, 1]], dtype = "double"
-#                         )
-# 
-#print ("Camera Matrix :\n {0}".format(camera_matrix))
+camera_matrix = np.array(
+                        [[focal_length, 0, center[0]],
+                        [0, focal_length, center[1]],
+                        [0, 0, 1]], dtype = "double"
+                        )
+
+print ("Camera Matrix :\n {0}".format(camera_matrix))
  
 dist_coeffs = np.zeros((4,1)) # Assuming no lens distortion
 print ("Dist Coeff :\n {0}".format(dist_coeffs))
 
-camera_matrix = np.array(
-                        [[616.77545938, 0, 320.67141362],
-                        [0, 616.77545938, 229.2410102],
-                        [0, 0, 1]], dtype = "double"
-                        )
- 
-print ("Camera Matrix :\n {0}".format(camera_matrix))
+#camera_matrix = np.array(
+#                        [[616.77545938, 0, 320.67141362],
+#                        [0, 616.77545938, 229.2410102],
+#                        [0, 0, 1]], dtype = "double"
+#                        )
+# 
+#print ("Camera Matrix :\n {0}".format(camera_matrix))
  
 #dist_coeffs =  [[ -2.10203569e-01]
 #                [ 3.46122613e-01]
@@ -77,5 +77,80 @@ print ("Translation Vector:\n {0}".format(translation_vector))
 #cv2.line(im, p1, p2, (255,0,0), 2)
  
 # Display image
-cv2.imshow("Output", im)
-cv2.waitKey(0)
+#cv2.imshow("Output", im)
+#cv2.waitKey(0)
+
+#,mtx=camera_matrix,dist=dist_coeffs,rvec=rotation_vector,tvec=translation_vector
+refPt = []
+
+def mouse_click_event(event,x,y,flags,param):
+    if event == cv2.EVENT_LBUTTONDBLCLK:
+        cv2.circle(img,(x,y),5,(255,0,0),-1)
+        #refPt[0] = x
+        #refPt[1] = y
+        refPt = [(x, y)]
+
+        #rotM = np.zeros((3,3))
+        #cv2.Rodrigues(rvec, rotM)
+        #print ("rotM :\n {0}".format(rotM))
+        #camMat = np.asarray(mtx)
+        #iRot = np.linalg.inv(rotM)
+        #iCam = np.linalg.inv(camMat)
+
+        print (refPt[0])
+        #(x, y) = (refPt[0], refPt[1])
+        #new_coord = get_coord(refPt, mtx, dist, iRot, iCam, tvec)
+        create_mask_matrix(camera_matrix, dist_coeffs, rotation_vector, translation_vector, refPt)
+
+
+def create_mask_matrix(mtx, dist, rvec, tvec, pointxy):
+    rotM = np.zeros((3,3))
+    cv2.Rodrigues(rvec, rotM)
+    #print ("rotM :\n {0}".format(rotM))
+    camMat = np.asarray(mtx)
+    iRot = np.linalg.inv(rotM)
+    iCam = np.linalg.inv(camMat)
+
+    #create matrix with coord
+    #for (y,x), _ in np.ndenumerate(self.mask):
+    #    if self.mask[y][x] == 1:
+    #(x, y) = (223, 399)
+    #print (refPt[0])
+    #(x, y) = (refPt[0], refPt[1])
+    new_coord = get_coord(pointxy, mtx, dist, iRot, iCam, tvec)
+    #mask_matrix[y][x] = [new_coord[0], new_coord[1]]
+
+
+def get_coord(point, mtx, dist, iRot, iCam, tvec):
+    un_point = cv2.undistortPoints(np.array(point).astype(np.float32), mtx, dist, P=mtx)
+    un_point = un_point.ravel().tolist()
+    uvPoint = np.matrix([un_point[0], un_point[1], 1]).T
+    tempMat = np.matmul(np.matmul(iRot, iCam), uvPoint)
+    tempMat2 = np.matmul(iRot, tvec)
+    s = (0 + tempMat2[1, 0]) / tempMat[1, 0]
+    wcPoint = np.matmul(iRot, (np.matmul(s * iCam, uvPoint) - tvec))
+    wcPoint[1] = 0
+    point3d = wcPoint.T.tolist()[0]
+    print ("X: {0}".format(point3d[0]))
+    print ("Y: {0}".format(point3d[1]))
+    print ("Z: {0}".format(point3d[2]))
+    print ("\n")
+    #print ("X:\n")
+    #print (point3d[0])
+    #print ("Z:\n")
+    #print (point3d[2])
+    return [point3d[0], point3d[2]]
+
+img = cv2.imread('./images/resized_table.jpg')
+cv2.namedWindow('image')
+cv2.setMouseCallback('image', mouse_click_event)
+
+while(1):
+    #create_mask_matrix(camera_matrix, dist_coeffs, rotation_vector, translation_vector)
+    cv2.imshow('image',img)
+    if cv2.waitKey(20) & 0xFF == 27:
+        break
+
+cv2.destroyAllWindows()
+
+#create_mask_matrix(camera_matrix, dist_coeffs, rotation_vector, translation_vector)
