@@ -13,7 +13,7 @@ def mouse_click_event(event,x,y,flags,param):
 
 
 # Create a black image, a window and bind the function to window
-img = cv2.imread('./images/resized_table.jpg')
+img = cv2.imread('./images/rectangle.jpg')
 cv2.namedWindow('image')
 cv2.setMouseCallback('image',mouse_click_event)
 

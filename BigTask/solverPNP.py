@@ -4,23 +4,23 @@ import cv2
 import numpy as np
  
 # Read Image
-im = cv2.imread("./images/resized_table.jpg");
+im = cv2.imread("./images/rectangle.jpg");
 size = im.shape
      
 #2D image points. If you change the image, you need to change vector
 image_points = np.array([
-                            (39, 588),     # Near left
-                            (588, 584),     # Near right
-                            (155, 193),     # Far left
-                            (418, 193),     # Far right
+                            (161, 438),     # Near left
+                            (1160, 474),     # Near right
+                            (362, 283),     # Far left
+                            (985, 301),     # Far right
                         ], dtype="double")
  
 # 3D model points.
 model_points = np.array([
                             (0.0, 0.0, 0.0),             # Near left
-                            (0.0, 0.0, 1000.0),        # Near right
-                            (-2000.0, 0.0, 0.0),     # Far left
-                            (-2000.0, 0.0, 1000.0),      # Far right
+                            (0.0, 0.0, 2000.0),        # Near right
+                            (-1000.0, 0.0, 0.0),     # Far left
+                            (-1000.0, 0.0, 2000.0),      # Far right
                         ])
  
  
@@ -141,7 +141,31 @@ def get_coord(point, mtx, dist, iRot, iCam, tvec):
     #print (point3d[2])
     return [point3d[0], point3d[2]]
 
-img = cv2.imread('./images/resized_table.jpg')
+#cv2.namedWindow('image')
+#cv2.setMouseCallback('image', mouse_click_event)
+
+#cap = cv2.VideoCapture(0)
+#if not cap:
+#    print("!!! Failed VideoCapture: invalid parameter!")
+
+#while(True):
+#    # Capture frame-by-frame
+#    ret, img = cap.read()
+#    if type(img) == type(None):
+#        print("!!! Couldn't read frame!")
+#        break
+
+#    # Display the resulting frame
+#    cv2.imshow('image',img)
+#    if cv2.waitKey(1) & 0xFF == ord('q'):
+#        break
+
+# release the capture
+#cap.release()
+#cv2.destroyAllWindows()
+
+
+img = cv2.imread('./images/rectangle.jpg')
 cv2.namedWindow('image')
 cv2.setMouseCallback('image', mouse_click_event)
 
@@ -153,4 +177,4 @@ while(1):
 
 cv2.destroyAllWindows()
 
-#create_mask_matrix(camera_matrix, dist_coeffs, rotation_vector, translation_vector)
+create_mask_matrix(camera_matrix, dist_coeffs, rotation_vector, translation_vector)
