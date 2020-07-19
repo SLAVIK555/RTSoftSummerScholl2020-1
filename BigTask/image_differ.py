@@ -11,18 +11,19 @@ cap = cv2.VideoCapture(0)
 
 while(1):
 	ret, img2 = cap.read()
+
 	#cv2.imshow("camera", img2)
 
 	diff = cv2.absdiff(img1, img2)
 	mask = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
 
-	th = 30
+	th = 45
 	imask =  mask>th
 
 	canvas = np.zeros_like(img2, np.uint8)
 	canvas[imask] = img2[imask]
 
-	#cv2.imshow('cavans', canvas)
+	cv2.imshow('cavans', canvas)
 
 	#cv2.waitKey(0)
 
@@ -31,11 +32,13 @@ while(1):
 	#Make more contrast
 	#-----Converting image to LAB Color model----------------------------------- 
 	lab= cv2.cvtColor(canvas, cv2.COLOR_BGR2LAB)
+	#lab2= cv2.cvtColor(img2, cv2.COLOR_BGR2LAB)
 	#cv2.imshow("lab",lab)
 	#cv2.waitKey(0)
 
 	#-----Splitting the LAB image to different channels-------------------------
 	l, a, b = cv2.split(lab)
+	#l2, a2, b2 = cv2.split(lab2)
 	#cv2.imshow('l_channel', l)
 	#cv2.imshow('a_channel', a)
 	#cv2.imshow('b_channel', b)
@@ -44,23 +47,27 @@ while(1):
 	#-----Applying CLAHE to L-channel-------------------------------------------
 	clahe = cv2.createCLAHE(clipLimit=90.0, tileGridSize=(1,1))
 	cl = clahe.apply(l)
+	#cl2 = clahe.apply(l2)
 	#cv2.imshow('CLAHE output', cl)
 	#cv2.waitKey(0)
 
 	#-----Merge the CLAHE enhanced L-channel with the a and b channel-----------
 	limg = cv2.merge((cl,a,b))
+	#limg2 = cv2.merge((cl2,a2,b2))
 	#cv2.imshow('limg', limg)
 	#cv2.waitKey(0)
 
 	#-----Converting image from LAB Color model to RGB model--------------------
-	final = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
+	final_canvas = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
+	#final2 = cv2.cvtColor(limg2, cv2.COLOR_LAB2BGR)
 	#cv2.imshow('final', final)
 	#cv2.waitKey(0)
 
 
 
+	"""
 	#Drawing lines
-	img = final
+	img = final_canvas
 	#gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
 	#kernel_size = 5
@@ -94,17 +101,17 @@ while(1):
 
 	# Draw the lines on the  image
 	lines_edges = cv2.addWeighted(img, 0.8, line_image, 1, 0)
-
+	cv2.imshow('lines_with_points', lines_edges)
 
 	#for line in lines:
 	#    for x1,y1,x2,y2 in line:
 	#    	cv2.circle(lines_edges,(x1,y1),1,(0,0,255))
 	#    	cv2.circle(lines_edges,(x2,y2),1,(0,0,255))
-
+	"""
 
 
 	#Drawing points with harris corner detector
-	operatedImage = cv2.cvtColor(final, cv2.COLOR_BGR2GRAY)
+	operatedImage = cv2.cvtColor(final_canvas, cv2.COLOR_BGR2GRAY)
 
   
 	# изменить тип данных
@@ -117,7 +124,7 @@ while(1):
 	# для определения углов с соответствующими
 	# значения в качестве входных параметров
 
-	dest = cv2.cornerHarris(operatedImage, 2, 5, 0.15)
+	dest = cv2.cornerHarris(operatedImage, 8, 7, 0.005)
 
   
 	# Результаты отмечены через расширенные углы
@@ -128,12 +135,12 @@ while(1):
 	# Возвращаясь к исходному изображению,
 	# с оптимальным пороговым значением
 
-	final[dest > 0.01 * dest.max()]=[0, 0, 255]
+	final_canvas[dest > 0.10 * dest.max()]=[0, 0, 255]
 
   
 	# окно с выводимым изображением с углами
 
-	cv2.imshow('final with Borders', final)
+	cv2.imshow('final_canvas with Borders', final_canvas)
 	#cv2.waitKey(0)
 
 
@@ -160,13 +167,19 @@ while(1):
 	#        for j in range(5):
 	#            lines_edges[int(b) + i, int(a) + j] = [0, 0, 255]
 
-	cv2.imshow('lines_with_points', lines_edges)
+	#cv2.imshow('lines_with_points', lines_edges)
 	#cv2.waitKey(0)
 
 
 
 	if cv2.waitKey(10) == 27: # Клавиша Esc
 		break
+
+	if cv2.waitKey(100) == 32: #Клавиша Пробел
+		img1 = img2
+
+
+
 
 
 cap.release()
