@@ -2,6 +2,7 @@
 import cv2
 import numpy as np
 import poly_point_isect as bot
+from new_image_differ import corner_find as cf
 
 #from __future__ import print_function
 
@@ -11,13 +12,14 @@ cap = cv2.VideoCapture(0)
 
 while(1):
 	ret, img2 = cap.read()
+	#img2 = cv2.imread("./images/fig.jpg")
 
 	#cv2.imshow("camera", img2)
 
 	diff = cv2.absdiff(img1, img2)
 	mask = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
 
-	th = 45
+	th = 35
 	imask =  mask>th
 
 	canvas = np.zeros_like(img2, np.uint8)
@@ -25,13 +27,73 @@ while(1):
 
 	cv2.imshow('cavans', canvas)
 
+
+	#cf(canvas)
+
+	Gaussian = cv2.GaussianBlur(canvas, (7, 7), 0)
+
 	#cv2.waitKey(0)
+	"""
+	font = cv2.FONT_HERSHEY_COMPLEX
+
+	img3 = canvas
+	img = cv2.cvtColor(img3, cv2.COLOR_BGR2GRAY)
+
+	# Преобразование изображения в двоичное изображение
+	# (только черно-белое изображение).
+
+	rett, threshold = cv2.threshold(img, 110, 255, cv2.THRESH_BINARY)
+
+  
+	#Обнаружение контуров в изображении.
+
+	contours, hierarchy = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+	# Проходя через все контуры, найденные на изображении.
+
+	for cnt in contours :
+		approx = cv2.approxPolyDP(cnt, 0.009 * cv2.arcLength(cnt, True), True)
+
+		# рисует границу контуров.
+
+		cv2.drawContours(img3, [approx], 0, (0, 0, 255), 5)
+
+		# Используется для выравнивания массива, содержащего
+
+		# координаты вершин.
+
+		n = approx.ravel() 
+		i = 0
+
+		for j in n :
+			if(i % 2 == 0):
+				x = n[i]# x - четные, y - нечетные
+				y = n[i + 1]# все начинается с нуля
+
+				# Строка, содержащая координаты.
+
+				string = "x:" + str(x) + " " + "y:" + str(y)
+
+				cv2.putText(img3, string, (x, y), font, 0.5, (0, 255, 0))
+
+		i = i + 1
+
+	# Отображение окончательного изображения.
+
+	cv2.imshow('image3', img3) 
+	"""
 
 
 
+
+
+
+
+
+	
 	#Make more contrast
 	#-----Converting image to LAB Color model----------------------------------- 
-	lab= cv2.cvtColor(canvas, cv2.COLOR_BGR2LAB)
+	lab= cv2.cvtColor(Gaussian, cv2.COLOR_BGR2LAB)
 	#lab2= cv2.cvtColor(img2, cv2.COLOR_BGR2LAB)
 	#cv2.imshow("lab",lab)
 	#cv2.waitKey(0)
@@ -60,10 +122,66 @@ while(1):
 	#-----Converting image from LAB Color model to RGB model--------------------
 	final_canvas = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
 	#final2 = cv2.cvtColor(limg2, cv2.COLOR_LAB2BGR)
-	#cv2.imshow('final', final)
+	cv2.imshow('final', final_canvas)
 	#cv2.waitKey(0)
+	cf(final_canvas)
 
 
+	"""
+	font = cv2.FONT_HERSHEY_COMPLEX
+
+	img3 = final_canvas
+	img = cv2.cvtColor(img3, cv2.COLOR_BGR2GRAY)
+
+	# Преобразование изображения в двоичное изображение
+	# (только черно-белое изображение).
+
+	rett, threshold = cv2.threshold(img, 110, 255, cv2.THRESH_BINARY)
+
+  
+	#Обнаружение контуров в изображении.
+
+	contours, hierarchy = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+	#print (contours)
+	# Проходя через все контуры, найденные на изображении.
+
+	for cnt in contours :
+		approx = cv2.approxPolyDP(cnt, 0.009 * cv2.arcLength(cnt, True), True)
+
+		# рисует границу контуров.
+
+		cv2.drawContours(img3, [approx], 0, (0, 0, 255), 2)
+
+		# Используется для выравнивания массива, содержащего
+
+		# координаты вершин.
+
+		n = approx.ravel() 
+
+		i = 0
+
+		for j in n:
+
+			if(i % 2 == 0):
+
+				x = n[i]
+
+				y = n[i + 1]
+
+
+
+			# Строка, содержащая координаты.
+
+			string = str(x) + " " + str(y)
+
+			cv2.putText(img2, string, (x, y), font, 0.5, (0, 255, 0)) 
+			
+			i = i + 1
+
+	# Отображение окончательного изображения.
+
+	cv2.imshow('image3', img3) 
+	"""
 
 	"""
 	#Drawing lines
@@ -109,7 +227,7 @@ while(1):
 	#    	cv2.circle(lines_edges,(x2,y2),1,(0,0,255))
 	"""
 
-
+	"""
 	#Drawing points with harris corner detector
 	operatedImage = cv2.cvtColor(final_canvas, cv2.COLOR_BGR2GRAY)
 
@@ -140,7 +258,7 @@ while(1):
   
 	# окно с выводимым изображением с углами
 
-	cv2.imshow('final_canvas with Borders', final_canvas)
+	#cv2.imshow('final_canvas with Borders', final_canvas)
 	#cv2.waitKey(0)
 
 
@@ -169,7 +287,7 @@ while(1):
 
 	#cv2.imshow('lines_with_points', lines_edges)
 	#cv2.waitKey(0)
-
+	"""
 
 
 	if cv2.waitKey(10) == 27: # Клавиша Esc
