@@ -14,6 +14,11 @@ def corner_find(image):
     font = cv2.FONT_HERSHEY_COMPLEX
     img2 = image
 
+    h, w, c = image.shape
+    hmi = h-1
+    wmi = w-1
+    #print (w)
+    #print (h)
     # Чтение того же изображения в другом
     # переменная и преобразование в серую шкалу.
     img = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
@@ -34,7 +39,7 @@ def corner_find(image):
         approx = cv2.approxPolyDP(cnt, 0.009 * cv2.arcLength(cnt, True), True)
 
         # рисует границу контуров.
-        cv2.drawContours(img2, [approx], 0, (0, 0, 255), 5) 
+        #cv2.drawContours(img2, [approx], 0, (0, 0, 255), 5) 
 
         # Используется для выравнивания массива, содержащего
         # координаты вершин.
@@ -47,20 +52,46 @@ def corner_find(image):
                 y = n[i + 1]
 
                 # Строка, содержащая координаты.
-                string = str(x) + " " + str(y) 
-                #####cv2.putText(img2, string, (x, y), font, 0.5, (0, 255, 0)) # Отрисовка точек внутри функции
-                points.append((x, y))
+                if x!=0 and y!=0 and x!=w and y!=h and x!=h and x!=w and x!=wmi and y!=hmi and x!=hmi and x!=wmi:
+                    string = str(x) + " " + str(y)
+                    #cv2.putText(img2, string, (x, y), font, 0.5, (0, 255, 0)) # Отрисовка точек внутри функции
+                    points.append([x, y])
 
             i = i + 1
 
+            #for k in range(0, len(points)):
+            #    print (points[k])
+    #print (points[0])
+    #print (len(points))
+    if len(points) == 6:
+        x1, y1 = points[0]
+        x2, y2 = points[1]
+        x3, y3 = points[2]
+        x4, y4 = points[3]
+        x5, y5 = points[4]
+        x6, y6 = points[5]
+        dx = x4-x5
+        x7 = x3-dx
+        dy = y4-y5
+        y7 = y3-dy
+        points.append([x7, y7])
+        dx1=x1-x2
+        dy1=y1-y2
+        x8=x6-dx1
+        y8=y6-dy1
+        points.append([x8, y8])
+
+    for p in points:
+        cv2.circle(img2, tuple(p), 10, (255,0,0), -1)
+
     # Отображение окончательного изображения и возвращаем список с точками.
-    #####cv2.imshow('image2', img2) #Отрисовки озображения внутри функции
+    ###########################################cv2.imshow('image2', img2) #Отрисовки озображения внутри функции
     #cv2.waitKey(0)
 
     return points
 
 
-def histogram_color_dominator(image, k):
+def histogram_color_dominator(image, k=2):
     img = image
     Z = img.reshape((-1,3))
 
@@ -77,7 +108,7 @@ def histogram_color_dominator(image, k):
     res = center[label.flatten()]
     res2 = res.reshape((img.shape))
 
-    #cv2.imshow('res2',res2)
+    ###############################################cv2.imshow('res2',res2)
     #cv2.waitKey(0)
 
     return res2
