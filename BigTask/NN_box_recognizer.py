@@ -72,7 +72,7 @@ def box_recognizer(image, net, classes, output_layers, required_confidence, rect
 						hcd_img[i, j] = (0, 0, 0)# Зачерняем все, кроме коробки
 			"""
 			mask = cv2.cvtColor(hcd_img, cv2.COLOR_BGR2GRAY)
-			###################################cv2.imshow('mask', mask)
+			cv2.imshow('mask', mask)
 			#cv2.waitKey(0)
 
 			th = 135
@@ -81,7 +81,7 @@ def box_recognizer(image, net, classes, output_layers, required_confidence, rect
 			hcd_img_canvas = np.zeros_like(hcd_img, np.uint8)
 			hcd_img_canvas[imask] = hcd_img[imask]
 
-			box_corn_points = cf(hcd_img_canvas)
+			box_corn_points = cf(hcd_img_canvas)#hcd_img_canvas
 			#box_corn_points_a = []
 			#box_corn_points_a.append(box_corn_points)
 			#label = str(classes[class_ids[i]])
@@ -96,19 +96,19 @@ def box_recognizer(image, net, classes, output_layers, required_confidence, rect
 	#cv2.imshow('img', img)
 	return BOXES_POINTS
 
-def nn_caler(img):
-	rect_scale = 1.1
+def nn_caler(img, net, layer_names):
+	rect_scale = 1.2
 	#img = cv2.imread("./images/nn_test.jpg")
 	# Load Yolo
-	net = cv2.dnn.readNet("yolov3_training_last.weights", "yolo-obj.cfg")
+	#net = cv2.dnn.readNet("yolov3_training_last.weights", "yolo-obj.cfg")
 
-	layer_names = net.getLayerNames()
+	#layer_names = net.getLayerNames()
 	output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 
 	# Name custom object
 	classes = ["box"]
 
-	NON_FUNC_BOXES_POINTS = box_recognizer(img, net, classes, output_layers, 0.7, rect_scale)
+	NON_FUNC_BOXES_POINTS = box_recognizer(img, net, classes, output_layers, 0.4, rect_scale)
 	print (len(NON_FUNC_BOXES_POINTS))
 	print ("NON_FUNC_BOXES_POINTS:\n {0}".format(NON_FUNC_BOXES_POINTS))
 
@@ -130,26 +130,33 @@ def nn_caler(img):
 			new_y=y+bcp_y
 			cv2.circle(img, (new_x, new_y), 5, (0,0,255), -1)# Отрисовка координат углов коробки внутри ректангла
 			cv2.imshow('img_with_rectngle', img)
-			cv2.waitKey(0)
+			#cv2.waitKey(0)
 
 		#cv2.imshow('img_with_rectngle', img)
 		#cv2.waitKey(0)
 
 
-img = cv2.imread("./images/nn_test.jpg")
-nn_caler(img)
-"""
+# Load Yolo
+net = cv2.dnn.readNet("yolov3_training_last.weights", "yolo-obj.cfg")
+
+layer_names = net.getLayerNames()
+
+
+#img = cv2.imread("./images/image0(1).png")
+#nn_caler(img, net, layer_names)
+#cv2.waitKey(0)
+
 cap = cv2.VideoCapture(0)
 while(1):
 	ret, img = cap.read()
-	nn_caler(img)
+	nn_caler(img, net, layer_names)
 
 	if cv2.waitKey(10) == 27: # Клавиша Esc
 		break
 
 cap.release()
 cv2.destroyAllWindows()
-"""
+
 """
 rect_scale = 1.1
 img = cv2.imread("./images/nn_test.jpg")
