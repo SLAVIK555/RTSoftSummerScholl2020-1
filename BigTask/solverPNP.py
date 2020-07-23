@@ -4,23 +4,23 @@ import cv2
 import numpy as np
  
 # Read Image
-im = cv2.imread("./images/rectangle.jpg");
+im = cv2.imread("./images/square.jpg");
 size = im.shape
      
 #2D image points. If you change the image, you need to change vector
 image_points = np.array([
-                            (161, 438),     # Near left
-                            (1160, 474),     # Near right
-                            (362, 283),     # Far left
-                            (985, 301),     # Far right
+                            (12, 400),     # Near left
+                            (615, 405),     # Near right
+                            (167, 223),     # Far left
+                            (473, 226),     # Far right
                         ], dtype="double")
  
 # 3D model points.
 model_points = np.array([
                             (0.0, 0.0, 0.0),             # Near left
-                            (0.0, 0.0, 2000.0),        # Near right
+                            (0.0, 0.0, 1000.0),        # Near right
                             (-1000.0, 0.0, 0.0),     # Far left
-                            (-1000.0, 0.0, 2000.0),      # Far right
+                            (-1000.0, 0.0, 1000.0),      # Far right
                         ])
  
  
@@ -165,7 +165,7 @@ def get_coord(point, mtx, dist, iRot, iCam, tvec):
 #cv2.destroyAllWindows()
 
 
-img = cv2.imread('./images/rectangle.jpg')
+img = cv2.imread('./images/square.jpg')
 cv2.namedWindow('image')
 cv2.setMouseCallback('image', mouse_click_event)
 

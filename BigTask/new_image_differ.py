@@ -112,7 +112,6 @@ def histogram_color_dominator(image, k=2):
     #cv2.waitKey(0)
 
     return res2
-
 """
 #img = cv2.imread("./images/rect.jpg")
 

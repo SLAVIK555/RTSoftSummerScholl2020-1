@@ -37,8 +37,8 @@ def box_recognizer(image, net, classes, output_layers, required_confidence, rect
 				h = int(detection[3] * height)
 
 				# Rectangle coordinates
-				x = int(center_x - w / 2)
-				y = int(center_y - h / 2)
+				x = int(center_x - w / 2)-int(0.01*w)
+				y = int(center_y - h / 2)-int(0.01*h)
 
 				boxes.append([x, y, w, h])
 				confidences.append(float(confidence))
@@ -75,7 +75,7 @@ def box_recognizer(image, net, classes, output_layers, required_confidence, rect
 			cv2.imshow('mask', mask)
 			#cv2.waitKey(0)
 
-			th = 135
+			th = 145
 			imask =  mask>th
 
 			hcd_img_canvas = np.zeros_like(hcd_img, np.uint8)
@@ -97,7 +97,7 @@ def box_recognizer(image, net, classes, output_layers, required_confidence, rect
 	return BOXES_POINTS
 
 def nn_caler(img, net, layer_names):
-	rect_scale = 1.2
+	rect_scale = 1.08
 	#img = cv2.imread("./images/nn_test.jpg")
 	# Load Yolo
 	#net = cv2.dnn.readNet("yolov3_training_last.weights", "yolo-obj.cfg")
@@ -129,10 +129,10 @@ def nn_caler(img, net, layer_names):
 			new_x=x+bcp_x
 			new_y=y+bcp_y
 			cv2.circle(img, (new_x, new_y), 5, (0,0,255), -1)# Отрисовка координат углов коробки внутри ректангла
-			cv2.imshow('img_with_rectngle', img)
+			#cv2.imshow('img_with_rectngle', img)
 			#cv2.waitKey(0)
 
-		#cv2.imshow('img_with_rectngle', img)
+		cv2.imshow('img_with_rectngle', img)
 		#cv2.waitKey(0)
 
 
@@ -146,13 +146,18 @@ layer_names = net.getLayerNames()
 #nn_caler(img, net, layer_names)
 #cv2.waitKey(0)
 
+out = cv2.VideoWriter('outpy3.mp4',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (640,480))
+
 cap = cv2.VideoCapture(0)
 while(1):
 	ret, img = cap.read()
-	nn_caler(img, net, layer_names)
+	if ret == True:
+		out.write(img)
+		nn_caler(img, net, layer_names)
+		#out.write(img)
 
-	if cv2.waitKey(10) == 27: # Клавиша Esc
-		break
+		if cv2.waitKey(10) == 27: # Клавиша Esc
+			break
 
 cap.release()
 cv2.destroyAllWindows()
