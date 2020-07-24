@@ -22,13 +22,15 @@ def corner_find(image):
     # Чтение того же изображения в другом
     # переменная и преобразование в серую шкалу.
     img = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+    #img = cv2.GaussianBlur(img, (3, 3), 0)
+    cv2.imshow('img', img)
 
   
     # Преобразование изображения в двоичное изображение
     # (только черно-белое изображение).
     _, threshold = cv2.threshold(img, 110, 255, cv2.THRESH_BINARY)
 
-  
+    #cv2.imshow('threshold', threshold)
     #Обнаружение контуров в изображении.
     contours, _= cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -85,7 +87,7 @@ def corner_find(image):
         cv2.circle(img2, tuple(p), 10, (255,0,0), -1)
 
     # Отображение окончательного изображения и возвращаем список с точками.
-    ###########################################cv2.imshow('image2', img2) #Отрисовки озображения внутри функции
+    ######################################cv2.imshow('image2', img2) #Отрисовки озображения внутри функции
     #cv2.waitKey(0)
 
     return points

@@ -25,8 +25,8 @@ while(1):
 	canvas = np.zeros_like(img2, np.uint8)
 	canvas[imask] = img2[imask]
 
-	cv2.imshow('cavans', canvas)
-
+	#cv2.imshow('cavans', canvas)
+	#cv2.imwrite("canvas.jpg", canvas)
 
 	#cf(canvas)
 
@@ -124,9 +124,15 @@ while(1):
 	#final2 = cv2.cvtColor(limg2, cv2.COLOR_LAB2BGR)
 	cv2.imshow('final', final_canvas)
 	#cv2.waitKey(0)
-	cf(final_canvas)
+	points = cf(final_canvas)
 
 
+	for p in points:
+		#cv2.putText(img, str(p), tuple(p), cv2.FONT_HERSHEY_COMPLEX, 0.5, (255, 0, 0))
+		cv2.circle(canvas, tuple(p), 10, (255,0,0), -1)
+
+	cv2.imshow('cavans', canvas)
+	cv2.imwrite("canvas_with_points.jpg", canvas)
 	"""
 	font = cv2.FONT_HERSHEY_COMPLEX
 

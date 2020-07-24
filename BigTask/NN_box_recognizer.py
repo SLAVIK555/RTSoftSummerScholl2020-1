@@ -30,15 +30,15 @@ def box_recognizer(image, net, classes, output_layers, required_confidence, rect
 			confidence = scores[class_id]
 			if confidence > required_confidence:
 				# Object detected
-				print(class_id)
+				#print(class_id)
 				center_x = int(detection[0] * width)
 				center_y = int(detection[1] * height)
 				w = int(detection[2] * width)
 				h = int(detection[3] * height)
 
 				# Rectangle coordinates
-				x = int(center_x - w / 2)-int(0.01*w)
-				y = int(center_y - h / 2)-int(0.01*h)
+				x = int(center_x - w / 2)-int(0.07*w)
+				y = int(center_y - h / 2)-int(0.07*h)
 
 				boxes.append([x, y, w, h])
 				confidences.append(float(confidence))
@@ -54,6 +54,15 @@ def box_recognizer(image, net, classes, output_layers, required_confidence, rect
 			crop_img = img[y:y+int(rect_scale*h), x:x+int(rect_scale*w)]
 			hcd_img = hcd(crop_img)
 
+			#hcd_img_height, hcd_img_width, hcd_img_channels = hcd_img.shape
+			#hcd_img_center_x = int(hcd_img_width/2)
+			#hcd_img_center_y = int(hcd_img_height/2)
+			#print(hcd_img_height)
+			#print(hcd_img_width)
+			#print(hcd_img_center_x)
+			#print(hcd_img_center_y)
+			#center_color = hcd_img[hcd_img_center_y, hcd_img_center_x]
+			#print ("center_color: {0}".format(center_color))
 			"""
 			hcd_img_height, hcd_img_width, hcd_img_channels = hcd_img.shape
 			hcd_img_center_x = int(hcd_img_width/2)
@@ -72,10 +81,10 @@ def box_recognizer(image, net, classes, output_layers, required_confidence, rect
 						hcd_img[i, j] = (0, 0, 0)# Зачерняем все, кроме коробки
 			"""
 			mask = cv2.cvtColor(hcd_img, cv2.COLOR_BGR2GRAY)
-			cv2.imshow('mask', mask)
+			#cv2.imshow('mask', mask)
 			#cv2.waitKey(0)
 
-			th = 145
+			th = 135
 			imask =  mask>th
 
 			hcd_img_canvas = np.zeros_like(hcd_img, np.uint8)
@@ -97,7 +106,7 @@ def box_recognizer(image, net, classes, output_layers, required_confidence, rect
 	return BOXES_POINTS
 
 def nn_caler(img, net, layer_names):
-	rect_scale = 1.08
+	rect_scale = 1.1
 	#img = cv2.imread("./images/nn_test.jpg")
 	# Load Yolo
 	#net = cv2.dnn.readNet("yolov3_training_last.weights", "yolo-obj.cfg")
@@ -109,11 +118,16 @@ def nn_caler(img, net, layer_names):
 	classes = ["box"]
 
 	NON_FUNC_BOXES_POINTS = box_recognizer(img, net, classes, output_layers, 0.4, rect_scale)
+
 	print (len(NON_FUNC_BOXES_POINTS))
 	print ("NON_FUNC_BOXES_POINTS:\n {0}".format(NON_FUNC_BOXES_POINTS))
 
 	for nfbp in range(len(NON_FUNC_BOXES_POINTS)):	
 		box_center, box_corner_points = NON_FUNC_BOXES_POINTS[nfbp]
+
+		#color = np.array((np.asscalar(np.int16(cent_color[0])),np.asscalar(np.int16(cent_color[1])),np.asscalar(np.int16(cent_color[2]))))
+		#color = np.array((int(cent_color[0]),int(cent_color[1]),int(cent_color[2])))
+		#print ("color: {0}".format(color))
 
 		print ("box_center:\n {0}".format(box_center))
 		print ("box_corner_points:\n {0}".format(box_corner_points))
@@ -146,7 +160,8 @@ layer_names = net.getLayerNames()
 #nn_caler(img, net, layer_names)
 #cv2.waitKey(0)
 
-out = cv2.VideoWriter('outpy3.mp4',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (640,480))
+out = cv2.VideoWriter('outpyy.mp4',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (640,480))
+pruf = cv2.VideoWriter('pruff2.mp4',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (640,480))
 
 cap = cv2.VideoCapture(0)
 while(1):
@@ -154,7 +169,7 @@ while(1):
 	if ret == True:
 		out.write(img)
 		nn_caler(img, net, layer_names)
-		#out.write(img)
+		pruf.write(img)
 
 		if cv2.waitKey(10) == 27: # Клавиша Esc
 			break
